@@ -13,7 +13,7 @@ jobs:
     runs-on: windows-2022
       
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Setup .NET build dependencies
       uses: timheuer/bootstrap-dotnet@v1
