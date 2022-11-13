@@ -62,7 +62,7 @@ runs:
 
         $vsixXml.Save("${{ inputs.manifest-file }}") | Out-Null
 
-        Write-Output "version=$version" >> $GITHUB_OUTPUT
+        Write-Output "version=$version" >> $Env:GITHUB_OUTPUT
     - name: VSIX token replacement
       if: inputs.vsix-token-source-file != '' && inputs.vsix-token-source-file != null
       shell: pwsh
