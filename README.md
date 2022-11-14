@@ -20,7 +20,7 @@ jobs:
 
     - name: Increment VSIX version
       id: vsix_version
-      uses: ./.github/workflows/composite/vsixversion
+      uses: timheuer/vsix-version-stamp@v2
       with:
         manifest-file: src\YourProjectLocation\source.extension.vsixmanifest
         vsix-token-source-file: src\YourProjectLocation\source.extension.cs
