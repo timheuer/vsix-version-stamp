@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-action.json
-name: 'Increment VSIX Version'
-description: 'Increments the VSIX build version'
+name: 'Set VSIX Version'
+description: 'Increments the VSIX build version or sets it to a specified version.'
 branding:
   icon: copy
   color: purple
@@ -20,6 +20,10 @@ inputs:
     description: 'Path to source.extension.vs'
     required: false
     default: ''
+  version-number:
+    description: If provided, will be used directly as the version of the VSIX, and no incrementing will happen.
+    required: false
+    default: ''
 outputs:
   version-number:
     description: 'The resulting version number'
@@ -30,6 +34,10 @@ runs:
     - name: Increment VSIX version
       id: version_increment
       shell: pwsh
+      env:
+        # Intermediary environment variable needed for security, see:
+        # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
+        VERSION_NUMBER: ${{ inputs.version-number }}
       run: |
         [xml]$vsixXml = Get-Content ${{ inputs.manifest-file }}
 
@@ -45,17 +53,22 @@ runs:
             $attrVersion = $vsixXml.SelectSingleNode("//ns:Version", $ns)
         }
 
-        [Version]$version = $attrVersion.Value
+        if ([string]::IsNullOrEmpty($Env:VERSION_NUMBER){
+            [Version]$version = $attrVersion.Value
 
-        if (!$attrVersion.Value){
-            $version = $attrVersion.InnerText
-        }
+            if (!$attrVersion.Value){
+                $version = $attrVersion.InnerText
+            }
 
-        if ("${{ inputs.version-type }}" -eq "build"){
-            $version = New-Object Version ([int]$version.Major),([int]$version.Minor),${{ inputs.build-number }}
+            if ("${{ inputs.version-type }}" -eq "build"){
+                $version = New-Object Version ([int]$version.Major),([int]$version.Minor),${{ inputs.build-number }}
+            }
+            elseif ("${{ inputs.version-type }}" -eq "revision"){
+                $version = New-Object Version ([int]$version.Major),([int]$version.Minor),([System.Math]::Max([int]$version.Build, 0)),${{ inputs.build-number }}
+            }
         }
-        elseif ("${{ inputs.version-type }}" -eq "revision"){
-            $version = New-Object Version ([int]$version.Major),([int]$version.Minor),([System.Math]::Max([int]$version.Build, 0)),${{ inputs.build-number }}
+        else{
+            [Version]$version = New-Object Version $Env:VERSION_NUMBER
         }
 
         $attrVersion.InnerText = $version
