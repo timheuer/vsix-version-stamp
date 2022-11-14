@@ -53,7 +53,7 @@ runs:
             $attrVersion = $vsixXml.SelectSingleNode("//ns:Version", $ns)
         }
 
-        if ([string]::IsNullOrEmpty($Env:VERSION_NUMBER){
+        if ([string]::IsNullOrEmpty($Env:VERSION_NUMBER)){
             [Version]$version = $attrVersion.Value
 
             if (!$attrVersion.Value){
