@@ -26,4 +26,4 @@ jobs:
         vsix-token-source-file: src\YourProjectLocation\source.extension.cs
 ```
 
-This will automatically increment the build portion (Major.Minor.Build) with the GitHub Actions run number.
+This will automatically increment the build portion (Major.Minor.Build) with the GitHub Actions run number. Using the `version-number` parameter you can set a specific version number instead of incrementing the current one.
