@@ -27,3 +27,17 @@ jobs:
 ```
 
 This will automatically increment the build portion (Major.Minor.Build) with the GitHub Actions run number. Using the `version-number` parameter you can set a specific version number instead of incrementing the current one.
+
+### Specific Version Setting
+
+You can also now (as of v2.2) set the version explicitly yourself.  Doing so would look like:
+
+```yml
+    - name: Increment VSIX version
+      id: vsix_version
+      uses: timheuer/vsix-version-stamp@v2
+      with:
+        version-number: '13.2.1'
+        manifest-file: src\YourProjectLocation\source.extension.vsixmanifest
+        vsix-token-source-file: src\YourProjectLocation\source.extension.cs
+```
