@@ -27,12 +27,12 @@ inputs:
 outputs:
   version-number:
     description: 'The resulting version number'
-    value: ${{ steps.version_set.outputs.version }}
+    value: ${{ steps.version_increment.outputs.version }}
 runs:
   using: "composite"
   steps:
     - name: Set VSIX version
-      id: version_set
+      id: version_increment
       shell: pwsh
       env:
         # Intermediary environment variable needed for security, see:
@@ -81,7 +81,7 @@ runs:
       shell: pwsh
       run: |
         $filePath = "${{ inputs.vsix-token-source-file }}"
-        $replacement = 'Version = "${{ steps.version_set.outputs.version }}"'
+        $replacement = 'Version = "${{ steps.version_increment.outputs.version }}"'
         $content = [string]::join([environment]::newline, (get-content $filePath))
         $regex = New-Object System.Text.RegularExpressions.Regex 'Version = "([0-9\\.]+)"'
         $regex.Replace($content, $replacement) | Out-File $FilePath
